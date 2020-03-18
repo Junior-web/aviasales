@@ -4,11 +4,36 @@ const formSearch = document.querySelector('.form-search'),
 	  inputCitiesTo = formSearch.querySelector('.input__cities-to'),
 	  dropdownCitiesTo = formSearch.querySelector('.dropdown__cities-to'),
 	  inputDateDepart = formSearch.querySelector('.input__date-depart');
+
+
+// данные
+const citiesApi = 'dataBase/cities.json',
+	  proxy = 'https://cors-anywhere.herokuapp.com/';
+
 	   
-let city = ['Санкт-Петербург', 'Москва', 'Анапа', 'Белгород', 'Братск', 'Волгоград', 'Иркутск', 'Казань',
-			  'Кемерово', 'Краснодар', 'Магадан', 'Новосибирск', 'Псков', 'Саранск', 'Элиста', 'Череповец', 'Якутск']; 
+let city = []; 
 
 let rememberCity = city.slice();
+
+// функции
+
+const getData = (url, callback) => {
+	const request = new XMLHttpRequest();
+	
+	request.open('GET', url);
+	
+	request.addEventListener('readystatechange', () => {
+		if(request.readyState !== 4) return;
+		
+		if(request.status === 200) {
+			callback(request.response);
+		} else {
+			console.log(request.status);
+		}
+	});
+	
+	request.send();
+};
 
 // убрать возможность выбора двух одинаковых городов
 			  
@@ -33,13 +58,15 @@ const showCity = (input, list) => {
 	
 	if(input.value !== '') {
 		const filterCity = city.filter((item) => { // отфильтровать в соответствии с введенным в input
-			return item.toLowerCase().includes(input.value.toLowerCase());
+			if(item.name) {
+				return item.name.toLowerCase().includes(input.value.toLowerCase());
+			}
 		});
 		
 		filterCity.forEach((item) => {
 			const li = document.createElement('li');
 			li.classList.add('dropdown__city');
-			li.textContent = item;
+			li.textContent = item.name;
 			list.append(li);
 		});
 	} else {
@@ -71,4 +98,17 @@ inputCitiesTo.addEventListener('input', () => {
 
 dropdownCitiesTo.addEventListener('click', (event) => {
 	chooseCity(event.target, inputCitiesTo, dropdownCitiesTo);	
+});
+
+
+// вызовы функций
+
+getData(citiesApi, (data) => {
+	const dataCities = JSON.parse(data);
+
+	city = dataCities.filter((item) => {
+		return true;
+	});
+
+	console.log(city);
 });
