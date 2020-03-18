@@ -5,9 +5,26 @@ const formSearch = document.querySelector('.form-search'),
 	  dropdownCitiesTo = formSearch.querySelector('.dropdown__cities-to'),
 	  inputDateDepart = formSearch.querySelector('.input__date-depart');
 	   
-const city = ['Санкт-Петербург', 'Москва', 'Анапа', 'Белгород', 'Братск', 'Волгоград', 'Иркутск', 'Казань',
+let city = ['Санкт-Петербург', 'Москва', 'Анапа', 'Белгород', 'Братск', 'Волгоград', 'Иркутск', 'Казань',
 			  'Кемерово', 'Краснодар', 'Магадан', 'Новосибирск', 'Псков', 'Саранск', 'Элиста', 'Череповец', 'Якутск']; 
+
+let rememberCity = city.slice();
+
+// убрать возможность выбора двух одинаковых городов
 			  
+// удалить выбранный город
+
+const duplicateRemove = (currentCity) => {
+	let index = city.indexOf(currentCity);
+	
+	if(index > -1) city.splice(index, 1);
+};
+
+// обновить массив при очистки поля ввода
+
+const updateCitiesArr = () => {
+	city = rememberCity.slice();
+};
 
 // показать список городов
 
@@ -25,6 +42,8 @@ const showCity = (input, list) => {
 			li.textContent = item;
 			list.append(li);
 		});
+	} else {
+		updateCitiesArr();
 	}
 };
 
@@ -33,8 +52,9 @@ const showCity = (input, list) => {
 const chooseCity = (target, input, dropdown) => {
 	if(target.tagName.toLowerCase() === 'li') {
 		input.value = target.textContent;
+		duplicateRemove(target.textContent);	
 		dropdown.textContent = '';
-	}	
+	}
 };
 
 inputCitiesFrom.addEventListener('input', () => {
